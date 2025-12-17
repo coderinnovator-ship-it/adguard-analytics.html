@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdGuard Pro - Google Ads Fraud Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #ef4444 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .tooltip {
+            position: relative;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1f2937;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <div class="text-center mb-8 md:mb-12">
+            <div class="flex flex-col md:flex-row items-center justify-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-4">
+                    <i class="fas fa-shield-alt text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900">AdGuard Pro</h1>
+                    <p class="text-lg md:text-xl text-gray-600 mt-2">Google Ads Fraud Detection & Analytics</p>
+                </div>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-3xl mx-auto">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-lock mr-2"></i>
+                    <strong>100% Secure:</strong> All analysis happens in your browser. Your data never leaves your computer.
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Upload & Instructions -->
+            <div class="lg:col-span-2">
+                <!-- Upload Section -->
+                <div id="uploadSection" class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <h2 class="text-2xl font-bold mb-2 text-gray-800">
+                        <i class="fas fa-chart-line mr-2 text-blue-600"></i>
+                        Analyze Your Google Ads Data
+                    </h2>
+                    <p class="text-gray-600 mb-6">Upload your Google Ads CSV report to detect fraud and optimize spending</p>
+                    
+                    <!-- File Upload Area -->
+                    <div class="border-3 border-dashed border-blue-200 bg-blue-50 rounded-xl p-8 text-center mb-8 transition-all hover:border-blue-400 hover:bg-blue-100">
+                        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-file-csv text-blue-600 text-3xl"></i>
+                        </div>
+                        <p class="text-gray-700 mb-4 font-medium">Drag & drop your CSV file here</p>
+                        <p class="text-gray-500 text-sm mb-6">or click to browse</p>
+                        
+                        <input type="file" accept=".csv,.txt" id="fileInput" class="hidden">
+                        <label for="fileInput" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg cursor-pointer hover:from-blue-700 hover:to-purple-700 font-semibold inline-block transition-all shadow-md hover:shadow-lg">
+                            <i class="fas fa-upload mr-2"></i>
+                            Choose Google Ads CSV File
+                        </label>
+                        
+                        <p id="fileName" class="mt-6 text-sm text-gray-600"></p>
+                        <p id="fileSize" class="text-xs text-gray-500"></p>
+                        
+                        <!-- Progress Bar -->
+                        <div id="progressContainer" class="hidden mt-6">
+                            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                <span>Processing...</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="progressBar" class="progress-bar h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Button -->
+                    <div class="text-center">
+                        <p class="text-gray-600 mb-4">Don't have a CSV? Try with sample data</p>
+                        <button id="analyzeBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-10 py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 font-semibold transition-all shadow-md hover:shadow-lg">
+                            <i class="fas fa-play-circle mr-2"></i>
+                            Run Demo Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-blue-800">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        How to Get Your Google Ads Data
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="flex items-start mb-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <span class="text-blue-600 font-bold">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Go to Google Ads</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Navigate to Reports → Predefined Reports</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="flex items-start mb-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <span class="text-blue-600 font-bold">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Select Campaign Performance</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Basic → Campaign Performance report</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="flex items-start mb-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <span class="text-blue-600 font-bold">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Set Date Range</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Choose last 30-90 days for best analysis</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="flex items-start mb-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <span class="text-blue-600 font-bold">4</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Download CSV</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Click Download → CSV format</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-white p-4 rounded-lg border border-blue-100">
+                        <h4 class="font-semibold text-gray-800 mb-2">
+                            <i class="fas fa-file-alt mr-2 text-blue-600"></i>
+                            Expected CSV Columns:
+                        </h4>
+                        <div class="bg-gray-50 p-3 rounded border text-sm font-mono overflow-x-auto">
+                            <code class="text-gray-700">Campaign, Clicks, Cost, Impressions, CTR, Avg. CPC, Conversions, Search impr. share</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Quick Stats -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800 border-b pb-3">
+                        <i class="fas fa-tachometer-alt mr-2 text-blue-600"></i>
+                        Quick Stats
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="tooltip">
+                            <p class="text-sm text-gray-600 mb-1">Average Ad Fraud Rate</p>
+                            <p class="text-3xl font-bold text-gray-900">12-15%</p>
+                            <p class="text-xs text-gray-500 mt-1">Industry average for Google Ads</p>
+                            <div class="tooltip-text">
+                                Based on 2024 industry reports, 12-15% of ad clicks are fraudulent across all platforms
+                            </div>
+                        </div>
+                        
+                        <div class="tooltip">
+                            <p class="text-sm text-gray-600 mb-1">Potential Monthly Savings</p>
+                            <p class="text-3xl font-bold text-green-600" id="potentialSavings">$150</p>
+                            <p class="text-xs text-gray-500 mt-1">If you spend $1,000/month</p>
+                            <div class="tooltip-text">
+                                Estimated based on industry average fraud rates and your potential ad spend
+                            </div>
+                        </div>
+                        
+                        <div class="pt-6 border-t">
+                            <h4 class="font-semibold text-gray-800 mb-3">Common Fraud Patterns</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-center text-sm">
+                                    <i class="fas fa-mouse-pointer text-red-500 mr-3 w-5"></i>
+                                    <span>Click farms & bots</span>
+                                </li>
+                                <li class="flex items-center text-sm">
+                                    <i class="fas fa-user-secret text-orange-500 mr-3 w-5"></i>
+                                    <span>Competitor clicks</span>
+                                </li>
+                                <li class="flex items-center text-sm">
+                                    <i class="fas fa-globe text-blue-500 mr-3 w-5"></i>
+                                    <span>Geographic fraud</span>
+                                </li>
+                                <li class="flex items-center text-sm">
+                                    <i class="fas fa-clock text-purple-500 mr-3 w-5"></i>
+                                    <span>Rapid repeated clicks</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="pt-6 border-t">
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
+                                <p class="text-sm text-blue-800">
+                                    <i class="fas fa-lightbulb mr-2"></i>
+                                    <strong>Pro Tip:</strong> Analyze data weekly to catch fraud early
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <!-- Score Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 fade-in">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Fraud Detection Results</h2>
+                        <p class="text-gray-600 mt-2">Analysis completed <span id="analysisTime"></span></p>
+                    </div>
+                    <div class="flex space-x-4 mt-4 md:mt-0">
+                        <button id="exportBtn" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium transition-colors">
+                            <i class="fas fa-download mr-2"></i>
+                            Export
+                        </button>
+                        <button id="resetBtn" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all">
+                            <i class="fas fa-redo mr-2"></i>
+                            New Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fraud Score Gauge -->
+                <div class="mb-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Overall Fraud Risk Score</h3>
+                        <span id="fraudScoreText" class="text-2xl font-bold">0%</span>
+                    </div>
+                    <div class="relative pt-2">
+                        <div class="flex mb-2 items-center justify-between">
+                            <div>
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">
+                                    Low Risk
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-200">
+                                    High Risk
+                                </span>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden h-4 mb-4 text-xs flex rounded-full bg-gray-200">
+                            <div id="fraudScoreBar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 transition-all duration-1000"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>0%</span>
+                            <span>25%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-mouse-pointer text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Clicks</p>
+                                <p class="text-3xl font-bold text-gray-900" id="totalClicks">0</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500" id="clickPeriod">Last 30 days</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Suspicious Clicks</p>
+                                <p class="text-3xl font-bold text-gray-900" id="suspiciousClicks">0</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500" id="suspiciousPercent">0% of total</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Spend</p>
+                                <p class="text-3xl font-bold text-gray-900" id="totalSpend">$0</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500" id="estimatedWaste">$0 potentially wasted</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-percentage text-p
